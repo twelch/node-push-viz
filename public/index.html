@@ -5,7 +5,16 @@
         <script src='/socket.io/socket.io.js'></script>
         <script src="Chart.js"></script>
         <script>
-            dough_chart = null;
+            hour_chart = null;
+            min_chart = null;
+            sec_chart = null;
+            prev_hour = null;
+            prev_min = null;
+            prev_sec = null;
+            cur_hour = null;
+            cur_min = null;
+            cur_sec = null;
+
             var socket = io.connect('//localhost:8080');
 
             socket.on('init-server', function(data) {
@@ -21,43 +30,62 @@
             socket.on('message', function() { console.log(arguments) });
 
             function drawViz(data) {
-                var ctx = $("#doughnut").get(0).getContext("2d");
-                if (!dough_chart) {
-                    dough_chart = new Chart(ctx);
+
+                
+                cur_date = new Date(Date.parse(data.time));
+                $('#timestamp').html(data.time);
+
+                //Fetch canvas elements
+                var hour_ctx = $("#hour-dough").get(0).getContext("2d");
+                var min_ctx = $("#min-dough").get(0).getContext("2d");
+                var sec_ctx = $("#sec-dough").get(0).getContext("2d");
+
+                //Create chart objects
+                if (!hour_chart) {
+                    hour_chart = new Chart(hour_ctx);
+                    min_chart = new Chart(min_ctx);
+                    sec_chart = new Chart(sec_ctx);
                 }
 
-                var data = [
-                    {
-                        value: 30,
-                        color:"#F7464A"
-                    },
-                    {
-                        value : 50,
-                        color : "#E2EAE9"
-                    },
-                    {
-                        value : 100,
-                        color : "#D4CCC5"
-                    },
-                    {
-                        value : 40,
-                        color : "#949FB1"
-                    },
-                    {
-                        value : 120,
-                        color : "#4D5360"
-                    }
+                cur_hour = cur_date.getHours();
+                if (cur_hour != prev_hour) {
+                    hour_data = [
+                        {value: cur_hour, color:"#F7464A"},
+                        {value : 24-cur_hour, color : "#555555"}
+                    ];
+                    prev_hour = cur_hour;
+                    hour_chart.Doughnut(hour_data);
+                }
 
-                ];
+                cur_min = cur_date.getMinutes();
+                if (cur_min != prev_min) {
+                    min_data = [
+                        {value: cur_min, color:"#F7464A"},
+                        {value : 60-cur_min, color : "#555555"}
+                    ];
+                    prev_min = cur_min;
+                    min_chart.Doughnut(min_data);
+                }
 
-                dough_chart.Doughnut(data);
+                cur_sec = cur_date.getSeconds();
+                if (cur_sec != prev_sec) {
+                    sec_data = [
+                        {value: cur_sec, color:"#F7464A"},
+                        {value : 60-cur_sec, color : "#555555"}
+                    ];
+                    prev_sec = cur_sec;
+                    sec_chart.Doughnut(sec_data);
+                }                
             }
 
         </script>
     </head>
     <body>
-        <div id="work_area">
-            <canvas id="doughnut" width="300" height="300"></canvas>
+        <div id="work_area">            
+            <canvas id="hour-dough" width="200" height="200"></canvas>
+            <canvas id="min-dough" width="200" height="200"></canvas>
+            <canvas id="sec-dough" width="200" height="200"></canvas>
+            <span id="timestamp"></span>
         </div>
     </body>
 </html>
