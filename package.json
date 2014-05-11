@@ -1,0 +1,11 @@
+{
+    "name": "SlowViz",
+    "version": "0.0.1",
+    "description": "Test pushing viz data to client",
+    "author": "Tim Welch",    
+    "dependencies": {
+        "socket.io": "latest",
+        "express": "latest"
+    },
+    "main": "index.js"
+}
