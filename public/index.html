@@ -15,7 +15,7 @@
             cur_min = null;
             cur_sec = null;
 
-            var socket = io.connect('//localhost:8080');
+            var socket = io.connect();
 
             socket.on('init-server', function(data) {
                 console.log(data.message);
